@@ -104,21 +104,3 @@ def init():
     
 init()
 
-# def device_behaviour(device):
-#     # Simular o comportamento de um dispositivo no sistema distribuído. 
-#     while True:
-#         time.sleep(random.randint(1, 10))  # Sleep aleatório para simular solicitações de acesso aleatório
-
-#         if device == leader:
-#             # Simular falha do líder
-#             if random.random() < 0.1:  # 10% de chance de falha
-#                 print(f"Lider {device['hostname']} falhou.")
-#                 elect_leader()
-#                 continue
-
-#        # Simula solicitação de acesso ao recurso compartilhado
-#         print(f"{device['hostname']} está solicitando acesso ao recurso compartilhado.")
-#         if leader:
-#             access_resource(device)
-#             print(f"{device['hostname']} acessou o recurso compartilhado.")
-
