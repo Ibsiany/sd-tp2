@@ -2,6 +2,14 @@ import threading
 import time
 import random
 import datetime
+import socket
+
+HOST = ''  # Endereco IP do Servidor
+PORT = 5000  # Porta que o Servidor esta
+conexao = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+orig = (HOST, PORT)
+conexao.bind(orig)
+
 
 # Arquivo compartilhado
 RESOURCE_FILE = './shared.txt'
@@ -45,7 +53,7 @@ def device_behaviour(device):
         print(f"{device['hostname']} está solicitando acesso ao recurso compartilhado.")
         if leader:
             access_resource(device)
-            print(f"{device['hostname']} acessou o recurso compartilhado.")
+            print(f"{device['hostname']} accessed the shared resource.")
 
 # Inicializando algoritmo de eleicao
 elect_leader()
