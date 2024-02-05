@@ -37,6 +37,10 @@ fila = []
 #     devicesAux.append(devicesIps)
 #     print(devicesAux)
 
+def election():
+    # algoritmo de eleicao
+    return
+
 def removeItemQueue(item, array):
     try:
         array.remove(item)
