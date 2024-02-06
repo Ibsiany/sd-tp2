@@ -13,13 +13,13 @@ conexao = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dest = (HOST, PORT)
 
 devices = [
-    'Dispositivo1',
-    'Dispositivo2',
-    'Dispositivo3',
-    'Dispositivo4',
+    {'ID': '10', 'IP': '186.25.0.2'},
+    {'ID': '20', 'IP': '186.25.0.3'},
+    {'ID': '30', 'IP': '186.25.0.4'},
+    {'ID': '40', 'IP': '186.25.0.5'},
 ]
 
-devicesAux = []
+# devices = []
 devicesIps = []
 
 fila = []
@@ -34,13 +34,13 @@ fila = []
 #        devicesIps.append(str(ip))
 #        print(ip)
 
-#     devicesAux.append(devicesIps)
-#     print(devicesAux)
+#     devices.append(devicesIps)
+#     print(devices)
 # Define the list of dictionaries
 
 # Find with 'ID'
 def findDevice(id):
-    for device in devicesAux:
+    for device in devices:
         if device['ID'] == id:
             return device
 
@@ -48,15 +48,15 @@ def ring_election(device, array, index):
     global leader 
     
     try:
-        if device["ID"] not in array and len(devicesAux) >= index:
+        if device["ID"] not in array and len(devices) >= index:
             array.append(device["ID"])
-            ring_election(devicesAux[index+1],array,index+1)
+            ring_election(devices[index+1],array,index+1)
         else:
             id = max(array)
             leader = findDevice(id)
             print(f"Novo lider eleito: {leader}")
     except Exception as e:
-        return ring_election(devicesAux[index-1],array,len(devicesAux)-1)
+        return ring_election(devices[index-1],array,len(devices)-1)
      
 
 def removeItemQueue(item, array):
@@ -65,11 +65,16 @@ def removeItemQueue(item, array):
     except Exception as e:
         return e
     
-def defineId(devices):
-    for i, ip in enumerate(devices):
-                id_maquina = random.randint(0,99)
-                devicesAux.append({"ID": id_maquina, "IP": ip})
-    return devicesAux
+# def defineId(devices):
+
+#     staticIps = ['186.25.0.1', '186.25.0.2', '186.25.0.3', '186.25.0.4']
+
+#     devices.clear()
+
+#     for i, ip in enumerate(staticIps):
+#                 id_maquina = random.randint(0,99)
+#                 devices.append({"ID": id_maquina, "IP": ip})
+#     return devices
     
 
 def access_resource(maquina):
@@ -89,25 +94,25 @@ def solicitar_acesso_recurso(maquina):
         fila.append(maquina)
 
 def init():
-    defineId(devices)
+    # defineId(devices)
     
     array = []
     
-    # while True:
-    if(leader in  devicesAux):
-        print('Leader')
-        # continue
-    else:
-        print('Eleger lider: ')
-        ring_election(devicesAux[0],array,0)
+    while True:
+        if(leader in  devices):
+            print(f'Lider atual: {leader}')
+            continue
+        else:
+            print('Eleger lider: ')
+            ring_election(devices[0],array,0)
 
-    access_resource_random = random.choice(devicesAux)
-    
-    if(((access_resource_random["ID"] == leader["ID"]) or (len(fila) == 0)) and access_resource_verify == False):
-        access_resource(access_resource_random)
-    elif (access_resource_random["ID"]  == leader["ID"]  and access_resource_verify == True):
-        fila.append(access_resource_random)
-    else:
-        solicitar_acesso_recurso(access_resource_random)
+        access_resource_random = random.choice(devices)
+        
+        if(((access_resource_random["ID"] == leader["ID"]) or (len(fila) == 0)) and access_resource_verify == False):
+            access_resource(access_resource_random)
+        elif (access_resource_random["ID"]  == leader["ID"]  and access_resource_verify == True):
+            fila.append(access_resource_random)
+        else:
+            solicitar_acesso_recurso(access_resource_random)
         
 init()
