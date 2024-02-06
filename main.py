@@ -14,18 +14,18 @@ dest = (HOST, PORT)
 
 fila = []
 array = []
-devicesIps = []
 
-def get_active_ips():
+def get_active_ips(): 
+    devicesIds = []
     devices = []
     
     for ip_machine in range(2, 6):
         ip = f"172.20.0.{ip_machine}"
         if ping(ip):
-            devicesIps.append(ip)
+            devicesIds.append(ip_machine)
             devices.append({"ID": ip_machine, "IP": ip})
             
-    return devices
+    return devices,devicesIds
 
 # devices = [
 #     {'ID': '10', 'IP': '186.25.0.2'},
@@ -82,22 +82,18 @@ def solicitar_acesso_recurso(maquina):
 def init():
     # print("ola")
     
-    print(devicesIps)
-    
     # defineId()
     
     # print(devices)
     
-    
     while True:
-        devices = get_active_ips()
-        print(devices)
+        devices,devicesIds = get_active_ips()
         
         if(devices == []):
             print('Nenhum dispositivo encontrado')
             continue
         else:
-            if(leader in  devices):
+            if(leader in  devices and leader["ID"] == max(devicesIds)):
                 print(f'Lider atual: {leader}')
                 continue
             else:
