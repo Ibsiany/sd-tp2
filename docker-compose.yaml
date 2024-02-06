@@ -2,45 +2,40 @@ version: '3'
 
 services:
   device1:
-    build:
-      context: .
-    image: ubuntu-python:latest
+    image: ubuntu:latest
+    command: sleep infinity
     networks:
       internal_network:
-        ipv4_address: 186.25.0.2
-    container_name: dispositivo_1
+        ipv4_address: 172.20.0.2
 
   device2:
-    build:
-      context: .
-    image: ubuntu-python:latest
+    image: ubuntu:latest
+    command: sleep infinity
     networks:
       internal_network:
-        ipv4_address: 186.25.0.3
-    container_name: dispositivo_2
+        ipv4_address: 172.20.0.3
 
   device3:
-    build:
-      context: .
-    image: ubuntu-python:latest
+    image: ubuntu:latest
+    command: sleep infinity
     networks:
       internal_network:
-        ipv4_address: 186.25.0.4
-    container_name: dispositivo_3
+        ipv4_address: 172.20.0.4
 
   device4:
-    build:
-      context: .
-    image: ubuntu-python:latest
+    image: ubuntu:latest
+    command: sleep infinity
     networks:
       internal_network:
-        ipv4_address: 186.25.0.5
-    container_name: dispositivo_4
+        ipv4_address: 172.20.0.5
+
+  pinger:
+    build: .
+    networks:
+      internal_network:
 
 networks:
   internal_network:
-    driver: bridge
     ipam:
-      driver: default
       config:
-        - subnet: 186.25.0.0/16
+        - subnet: 172.20.0.0/16

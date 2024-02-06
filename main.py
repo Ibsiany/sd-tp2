@@ -1,8 +1,8 @@
-import threading
-import ipaddress
 import random
 import datetime
 import socket
+import time
+from ping3 import ping
 
 RESOURCE_FILE = './shared.txt'
 access_resource_verify = False
@@ -12,51 +12,49 @@ PORT = 5000  # Porta que o Servidor esta
 conexao = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dest = (HOST, PORT)
 
-devices = [
-    {'ID': '10', 'IP': '186.25.0.2'},
-    {'ID': '20', 'IP': '186.25.0.3'},
-    {'ID': '30', 'IP': '186.25.0.4'},
-    {'ID': '40', 'IP': '186.25.0.5'},
-]
-
-# devices = []
+fila = []
+array = []
 devicesIps = []
 
-fila = []
-     
-# def infoMaquinas():
-#     # nomeHost = conexao.gethostname()
-#     # ipHost = conexao.gethostbyname(nomeHost)
+def get_active_ips():
+    devices = []
+    
+    for ip_machine in range(2, 6):
+        ip = f"172.20.0.{ip_machine}"
+        if ping(ip):
+            devicesIps.append(ip)
+            devices.append({"ID": ip_machine, "IP": ip})
+            
+    return devices
 
-#     network = ipaddress.IPv4Network(f"{dest}/24", strict=False)
-
-#     for ip in network.hosts():
-#        devicesIps.append(str(ip))
-#        print(ip)
-
-#     devices.append(devicesIps)
-#     print(devices)
-# Define the list of dictionaries
+# devices = [
+#     {'ID': '10', 'IP': '186.25.0.2'},
+#     {'ID': '20', 'IP': '186.25.0.3'},
+#     {'ID': '30', 'IP': '186.25.0.4'},
+#     {'ID': '40', 'IP': '186.25.0.5'},
+# ]
 
 # Find with 'ID'
-def findDevice(id):
+def findDevice(id,devices):
     for device in devices:
         if device['ID'] == id:
             return device
 
-def ring_election(device, array, index):
+def ring_election(device, index, devices):
     global leader 
+    global array 
     
     try:
         if device["ID"] not in array and len(devices) >= index:
             array.append(device["ID"])
-            ring_election(devices[index+1],array,index+1)
+            ring_election(devices[index+1],index+1)
         else:
             id = max(array)
-            leader = findDevice(id)
+            leader = findDevice(id,devices)
+            array = []
             print(f"Novo lider eleito: {leader}")
     except Exception as e:
-        return ring_election(devices[index-1],array,len(devices)-1)
+        return ring_election(devices[index-1],len(devices)-1,devices)
      
 
 def removeItemQueue(item, array):
@@ -64,18 +62,6 @@ def removeItemQueue(item, array):
         array.remove(item)
     except Exception as e:
         return e
-    
-# def defineId(devices):
-
-#     staticIps = ['186.25.0.1', '186.25.0.2', '186.25.0.3', '186.25.0.4']
-
-#     devices.clear()
-
-#     for i, ip in enumerate(staticIps):
-#                 id_maquina = random.randint(0,99)
-#                 devices.append({"ID": id_maquina, "IP": ip})
-#     return devices
-    
 
 def access_resource(maquina):
     access_resource_verify = True
@@ -94,25 +80,39 @@ def solicitar_acesso_recurso(maquina):
         fila.append(maquina)
 
 def init():
-    # defineId(devices)
+    # print("ola")
     
-    array = []
+    print(devicesIps)
+    
+    # defineId()
+    
+    # print(devices)
+    
     
     while True:
-        if(leader in  devices):
-            print(f'Lider atual: {leader}')
+        devices = get_active_ips()
+        print(devices)
+        
+        if(devices == []):
+            print('Nenhum dispositivo encontrado')
             continue
         else:
-            print('Eleger lider: ')
-            ring_election(devices[0],array,0)
+            if(leader in  devices):
+                print(f'Lider atual: {leader}')
+                continue
+            else:
+                print('Eleger lider: ')
+                ring_election(devices[0],0,devices)
 
-        access_resource_random = random.choice(devices)
-        
-        if(((access_resource_random["ID"] == leader["ID"]) or (len(fila) == 0)) and access_resource_verify == False):
-            access_resource(access_resource_random)
-        elif (access_resource_random["ID"]  == leader["ID"]  and access_resource_verify == True):
-            fila.append(access_resource_random)
-        else:
-            solicitar_acesso_recurso(access_resource_random)
+            access_resource_random = random.choice(devices)
+            
+            if(((access_resource_random["ID"] == leader["ID"]) or (len(fila) == 0)) and access_resource_verify == False):
+                access_resource(access_resource_random)
+            elif (access_resource_random["ID"]  == leader["ID"]  and access_resource_verify == True):
+                fila.append(access_resource_random)
+            else:
+                solicitar_acesso_recurso(access_resource_random)
+                
+            time.sleep(10)
         
 init()
