@@ -38,8 +38,7 @@ fila = []
 #     print(devicesAux)
 # Define the list of dictionaries
 
-# Find the dictionary with 'ID'
-
+# Find with 'ID'
 def findDevice(id):
     for device in devicesAux:
         if device['ID'] == id:
