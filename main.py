@@ -4,6 +4,9 @@ import random
 import datetime
 import socket
 
+RESOURCE_FILE = './shared.txt'
+access_resource_verify = False
+leader = {'ID': '', 'IP': ''}
 HOST = 'localhost'  # Endereco IP do Servidor
 PORT = 5000  # Porta que o Servidor esta
 conexao = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -19,9 +22,6 @@ devices = [
 devicesAux = []
 devicesIps = []
 
-RESOURCE_FILE = './shared.txt'
-leader = {'ID': '', 'IP': ''}
-access_resource_verify = False
 fila = []
      
 # def infoMaquinas():
@@ -36,10 +36,29 @@ fila = []
 
 #     devicesAux.append(devicesIps)
 #     print(devicesAux)
+# Define the list of dictionaries
 
-def election():
-    # algoritmo de eleicao
-    return
+# Find the dictionary with 'ID'
+
+def findDevice(id):
+    for device in devicesAux:
+        if device['ID'] == id:
+            return device
+
+def ring_election(device, array, index):
+    global leader 
+    
+    try:
+        if device["ID"] not in array and len(devicesAux) >= index:
+            array.append(device["ID"])
+            ring_election(devicesAux[index+1],array,index+1)
+        else:
+            id = max(array)
+            leader = findDevice(id)
+            print(f"Novo lider eleito: {leader}")
+    except Exception as e:
+        return ring_election(devicesAux[index-1],array,len(devicesAux)-1)
+     
 
 def removeItemQueue(item, array):
     try:
@@ -47,17 +66,10 @@ def removeItemQueue(item, array):
     except Exception as e:
         return e
     
-def elect_leader(maquinas):
-    #  Eleger um novo líder entre os dispositivos.
-     leader = random.choice(maquinas)
-     print(f"Novo lider eleito: {leader}")
-     
 def defineId(devices):
     for i, ip in enumerate(devices):
-                id_maquina = str(i+1)
+                id_maquina = random.randint(0,99)
                 devicesAux.append({"ID": id_maquina, "IP": ip})
-    print(devicesAux)
-    
     return devicesAux
     
 
@@ -78,16 +90,17 @@ def solicitar_acesso_recurso(maquina):
         fila.append(maquina)
 
 def init():
-    infos = defineId(devices)
-    elect_leader(infos)
+    defineId(devices)
+    
+    array = []
     
     # while True:
     if(leader in  devicesAux):
         print('Leader')
         # continue
     else:
-        print('Eleger lider')
-        elect_leader(devicesAux)
+        print('Eleger lider: ')
+        ring_election(devicesAux[0],array,0)
 
     access_resource_random = random.choice(devicesAux)
     
@@ -97,10 +110,5 @@ def init():
         fila.append(access_resource_random)
     else:
         solicitar_acesso_recurso(access_resource_random)
-            
-    # infoMaquinas()
-    # access_resource_random = random.choice(devicesAux)
-    # removeItemQueue(access_resource_random,devicesAux)
-    
+        
 init()
-
