@@ -102,12 +102,12 @@ def init():
             continue
         else:
             # Check if the current leader is still available
-            if leader not in devices or ping(leader['IP']) is False:
+            if leader not in devices or ping(leader['IP']) is False or leader["ID"] != max(devicesIds):
                 print('Eleger lider: ')
                 ring_election(devices[0],0,devices)
 
             # If the leader is still the same, print it
-            elif leader["ID"] == max(devicesIds):
+            else:
                 print(f'Lider atual: {leader}')
 
             access_resource_random = random.choice(devices)
