@@ -1,5 +1,6 @@
 import random
 import datetime
+import time
 import socket
 from ping3 import ping
 
@@ -111,5 +112,7 @@ def init():
 
             access_resource_random = random.choice(devices)
             mutual_exclusion(access_resource_random)
+            
+        time.sleep(10)
         
 init()
