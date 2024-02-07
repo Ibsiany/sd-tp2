@@ -19,7 +19,7 @@ def get_active_ips():
     devicesIds = []
     devices = []
 
-    for ip_machine in range(2, 6):
+    for ip_machine in range(2, 10):
         ip = f"172.16.100.{ip_machine}"
         # ip = f"172.20.0.{ip_machine}"
         if ping(ip) != False:
