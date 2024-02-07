@@ -34,7 +34,7 @@ def get_active_ips():
 # ]
 
 # Find with 'ID'
-def findDevice(id,devices):
+def find_device(id,devices):
     for device in devices:
         if device['ID'] == id:
             return device
@@ -49,14 +49,13 @@ def ring_election(device, index, devices):
             ring_election(devices[index+1],index+1)
         else:
             id = max(array)
-            leader = findDevice(id,devices)
+            leader = find_device(id,devices)
             array = []
             print(f"Novo lider eleito: {leader}")
     except Exception as e:
         return ring_election(devices[index-1],len(devices)-1,devices)
-     
 
-def removeItemQueue(item, array):
+def remove_item_queue(item, array):
     try:
         array.remove(item)
     except Exception as e:
@@ -69,7 +68,7 @@ def access_resource(maquina):
     with open(RESOURCE_FILE, 'a') as file:
         file.write(f"ID: {maquina['ID']}, IP: {maquina['IP']} acessado em {timestamp}\n")
         
-    removeItemQueue(maquina, fila)
+    remove_item_queue(maquina, fila)
     access_resource_verify = False
 
 def solicitar_acesso_recurso(maquina):
@@ -77,6 +76,14 @@ def solicitar_acesso_recurso(maquina):
         access_resource(maquina)
     else:
         fila.append(maquina)
+
+def mutual_exclusion(access_resource_random):
+    if(((access_resource_random["ID"] == leader["ID"]) or (len(fila) == 0)) and access_resource_verify == False):
+        access_resource(access_resource_random)
+    elif (access_resource_random["ID"]  == leader["ID"]  and access_resource_verify == True):
+        fila.append(access_resource_random)
+    else:
+        solicitar_acesso_recurso(access_resource_random)
 
 def init():
     # print("ola")
@@ -101,11 +108,6 @@ def init():
 
             access_resource_random = random.choice(devices)
             
-            if(((access_resource_random["ID"] == leader["ID"]) or (len(fila) == 0)) and access_resource_verify == False):
-                access_resource(access_resource_random)
-            elif (access_resource_random["ID"]  == leader["ID"]  and access_resource_verify == True):
-                fila.append(access_resource_random)
-            else:
-                solicitar_acesso_recurso(access_resource_random)
+            mutual_exclusion(access_resource_random)
         
 init()
