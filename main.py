@@ -18,13 +18,20 @@ def get_active_ips():
     devicesIds = []
     devices = []
     
+    id = 5
     for ip_machine in range(2, 6):
         ip = f"172.20.0.{ip_machine}"
         if ping(ip) != False:
-            devicesIds.append(ip_machine)
-            devices.append({"ID": ip_machine, "IP": ip})
+            devicesIds.append(f"{id-ip_machine}")
+            devices.append({"ID": f"{id-ip_machine}", "IP": ip})
+            id = id - 1
         
     return devices,devicesIds
+
+# IP: 2 -> ID: 3 
+# IP: 3 -> ID: 2
+# IP: 4 -> ID: 1
+# IP: 5 -> ID: 0 
 
 # devices = [
 #     {'ID': '10', 'IP': '186.25.0.2'},
@@ -99,15 +106,16 @@ def init():
             print('Nenhum dispositivo encontrado')
             continue
         else:
-            if(leader in  devices and leader["ID"] == max(devicesIds)):
-                print(f'Lider atual: {leader}')
-                continue
-            else:
+            # Check if the current leader is still available
+            if leader not in devices or ping(leader['IP']) is False:
                 print('Eleger lider: ')
                 ring_election(devices[0],0,devices)
 
+            # If the leader is still the same, print it
+            elif leader["ID"] == max(devicesIds):
+                print(f'Lider atual: {leader}')
+
             access_resource_random = random.choice(devices)
-            
             mutual_exclusion(access_resource_random)
         
 init()
