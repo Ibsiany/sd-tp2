@@ -1,7 +1,6 @@
 import random
 import datetime
 import socket
-import time
 from ping3 import ping
 
 RESOURCE_FILE = './shared.txt'
