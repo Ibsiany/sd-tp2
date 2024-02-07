@@ -20,7 +20,8 @@ def get_active_ips():
     
     id = 5
     for ip_machine in range(2, 6):
-        ip = f"172.20.0.{ip_machine}"
+        ip = f"172.16.100.{ip_machine}"
+        # ip = f"172.20.0.{ip_machine}"
         if ping(ip) != False:
             devicesIds.append(f"{id-ip_machine}")
             devices.append({"ID": f"{id-ip_machine}", "IP": ip})
