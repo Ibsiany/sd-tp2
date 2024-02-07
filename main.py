@@ -87,13 +87,7 @@ def mutual_exclusion(access_resource_random):
     else:
         solicitar_acesso_recurso(access_resource_random)
 
-def init():
-    # print("ola")
-    
-    # defineId()
-    
-    # print(devices)
-    
+def init():    
     while True:
         devices,devicesIds = get_active_ips()
         
@@ -101,12 +95,10 @@ def init():
             print('Nenhum dispositivo encontrado')
             continue
         else:
-            # Check if the current leader is still available
             if leader not in devices or ping(leader['IP']) is False or leader["ID"] != max(devicesIds):
                 print('Eleger lider: ')
                 ring_election(devices[0],0,devices)
 
-            # If the leader is still the same, print it
             else:
                 print(f'Lider atual: {leader}')
 
