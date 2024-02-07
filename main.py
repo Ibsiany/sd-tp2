@@ -21,10 +21,10 @@ def get_active_ips():
     
     for ip_machine in range(2, 6):
         ip = f"172.20.0.{ip_machine}"
-        if ping(ip):
+        if ping(ip) != False:
             devicesIds.append(ip_machine)
             devices.append({"ID": ip_machine, "IP": ip})
-            
+        
     return devices,devicesIds
 
 # devices = [
@@ -108,7 +108,5 @@ def init():
                 fila.append(access_resource_random)
             else:
                 solicitar_acesso_recurso(access_resource_random)
-                
-            time.sleep(10)
         
 init()

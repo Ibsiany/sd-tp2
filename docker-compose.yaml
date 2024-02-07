@@ -1,28 +1,28 @@
 version: '3'
 
 services:
-  device1:
+  device2:
     image: ubuntu:latest
     command: sleep infinity
     networks:
       internal_network:
         ipv4_address: 172.20.0.2
 
-  device2:
+  device3:
     image: ubuntu:latest
     command: sleep infinity
     networks:
       internal_network:
         ipv4_address: 172.20.0.3
 
-  device3:
+  device4:
     image: ubuntu:latest
     command: sleep infinity
     networks:
       internal_network:
         ipv4_address: 172.20.0.4
 
-  device4:
+  device5:
     image: ubuntu:latest
     command: sleep infinity
     networks:
@@ -33,6 +33,7 @@ services:
     build: .
     networks:
       internal_network:
+          ipv4_address: 172.20.0.6
 
 networks:
   internal_network:
