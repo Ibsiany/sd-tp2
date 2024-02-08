@@ -87,6 +87,11 @@ def mutual_exclusion(access_resource_random):
     else:
         solicitar_acesso_recurso(access_resource_random)
 
+
+def consume_queue():
+    for i in range(0, len(fila)):
+       mutual_exclusion(fila[i])
+
 def init():    
     while True:
         devices,devicesIds = get_active_ips()
@@ -104,6 +109,8 @@ def init():
 
             access_resource_random = random.choice(devices)
             mutual_exclusion(access_resource_random)
+            
+            consume_queue()
             
         time.sleep(10)
         
