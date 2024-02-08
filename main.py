@@ -91,6 +91,8 @@ def mutual_exclusion(access_resource_random):
 def consume_queue():
     for i in range(0, len(fila)):
        mutual_exclusion(fila[i])
+       remove_item_queue(fila[i],fila)
+    
 
 def init():    
     while True:
